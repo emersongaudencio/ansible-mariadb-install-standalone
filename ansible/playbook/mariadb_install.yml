@@ -1,0 +1,39 @@
+---
+- name: Standalone MariaDB Installation
+  hosts: all
+  tasks:
+     - name: Transfering MariaDB install script
+       copy: src=/etc/ansible/roles/mysql_install/mariadb_install.sh dest=/tmp mode=0777
+
+     - name: Transfering MariaDB Configuration script
+       copy: src=/etc/ansible/roles/mariadb_install/mariadb_install_config.sh dest=/tmp mode=0777
+
+    - name: Transfering MariaDB Version file
+      copy: src=/etc/ansible/roles/mariadb_install/MARIADB_VERSION dest=/tmp mode=0777
+
+     - name: Executing MariaDB Instalation script
+       command: sh /tmp/mariadb_install.sh
+       register: cmd_install
+     - debug: msg="{{ cmd_install.stdout_lines|replace('\\t',' ') }}"
+     - debug: msg="{{ cmd_install.stderr_lines|replace('\\t',' ') }}"
+
+     - name: Executing MariaDB Configuration script
+       command: sh /tmp/mariadb_install_config.sh
+       register: cmd_config
+     - debug: msg="{{ cmd_config.stdout_lines|replace('\\t',' ') }}"
+     - debug: msg="{{ cmd_config.stderr_lines|replace('\\t',' ') }}"
+
+     - name: Ansible delete - MariaDB install script
+       file:
+         path: /tmp/mariadb_install_config.sh
+         state: absent
+
+     - name: Ansible delete - MariaDB config script
+       file:
+         path: /tmp/mariadb_install.sh
+         state: absent
+
+     - name: Ansible delete - MariaDB Version file
+       file:
+         path: /tmp/MARIADB_VERSION
+         state: absent
