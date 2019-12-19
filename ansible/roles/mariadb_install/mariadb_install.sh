@@ -13,7 +13,8 @@ sed -ie 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 /usr/sbin/setenforce 0
 ####### PACKAGES ###########################
 # -------------- For RHEL/CentOS 7 --------------
-rpm -ihv http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+#rpm -ihv http://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+yum -y install epel-release
 
 ### clean yum cache ###
 rm -rf /etc/yum.repos.d/MariaDB.repo
