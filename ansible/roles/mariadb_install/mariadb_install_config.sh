@@ -3,6 +3,8 @@
 # To generate a random number in a UNIX or Linux shell, the shell maintains a shell variable named RANDOM. Each time this variable is read, a random number between 0 and 32767 is generated.
 SERVERID=$(($RANDOM))
 GTID=$(($RANDOM))
+##### Checking MariaDB Version #####
+MARIADB_VERSION=`mysql --version |awk -F "-" {'print $1'}|awk -F "." {'print $1$2$3'} | awk {'print $5'}`
 
 ### get amount of memory who will be reserved to InnoDB Buffer Pool
 INNODB_MEM=$(expr $(($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 10)) \* 7 / 1024 / 1024)G

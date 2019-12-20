@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 echo "HOSTNAME: " `hostname`
 echo "BEGIN - [`date +%d/%m/%Y" "%H:%M:%S`]"
 echo "##############"
