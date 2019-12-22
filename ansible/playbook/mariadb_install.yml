@@ -8,8 +8,10 @@
      - name: Transfering MariaDB Configuration script
        copy: src=/etc/ansible/roles/mariadb_install/mariadb_install_config.sh dest=/tmp mode=0777
 
-    - name: Transfering MariaDB Version file
-      copy: src=/etc/ansible/roles/mariadb_install/MARIADB_VERSION dest=/tmp mode=0777
+     - name: Transfering MariaDB Version file
+       copy:
+         content: '{{ mariadb_version }}'
+         dest: /tmp/MARIADB_VERSION
 
      - name: Executing MariaDB Instalation script
        command: sh /tmp/mariadb_install.sh
