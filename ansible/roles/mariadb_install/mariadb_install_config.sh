@@ -48,7 +48,7 @@ fi
 ### datadir and logdir ####
 DATA_DIR="/var/lib/mysql/datadir"
 DATA_LOG="/var/lib/mysql-logs"
-TMP_DIR="/tmp"
+TMP_DIR="/var/lib/mysql-tmp"
 
 if [ "$MARIADB_VERSION" == "101" ]; then
   ### collation and character set ###
@@ -303,3 +303,6 @@ password        = $hash
 mysql -e "GRANT REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD';";
 mysql -e "GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQLCHK_USER_PWD';";
 mysql -e "flush privileges;"
+
+### REMOVE TMP FILES on /tmp #####
+rm -rf /tmp/*

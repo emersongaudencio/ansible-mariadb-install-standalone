@@ -2,6 +2,7 @@
 echo "HOSTNAME: " `hostname`
 echo "BEGIN - [`date +%d/%m/%Y" "%H:%M:%S`]"
 echo "##############"
+echo "$1" > /tmp/MARIADB_VERSION
 MARIADB_VERSION=$(cat /tmp/MARIADB_VERSION)
 
 ##### FIREWALLD DISABLE ########################
@@ -139,6 +140,9 @@ echo '  else' >> /etc/profile
 echo '    ulimit -u 16384 -n 65536' >> /etc/profile
 echo '  fi' >> /etc/profile
 echo 'fi' >> /etc/profile
+
+### REMOVE MARIADB VERSION FILE #####
+rm -rf /tmp/MARIADB_VERSION
 
 echo "##############"
 echo "END - [`date +%d/%m/%Y" "%H:%M:%S`]"
