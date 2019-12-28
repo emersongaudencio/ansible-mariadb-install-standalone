@@ -3,10 +3,10 @@
   hosts: all
   tasks:
      - name: Transfering MariaDB install script
-       copy: src=/etc/ansible/roles/mysql_install/mariadb_install.sh dest=/tmp mode=0777
+       copy: src=mariadb_install/mariadb_install.sh dest=/tmp mode=0777
 
      - name: Transfering MariaDB Configuration script
-       copy: src=/etc/ansible/roles/mariadb_install/mariadb_install_config.sh dest=/tmp mode=0777
+       copy: src=mariadb_install/mariadb_install_config.sh dest=/tmp mode=0777
 
      - name: Executing MariaDB Instalation script
        command: "sh /tmp/mariadb_install.sh {{ mariadb_version }}"

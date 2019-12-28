@@ -69,7 +69,7 @@ elif [[ "$MARIADB_VERSION" == "104" ]]; then
   ### collation and character set ###
   COLLATION="utf8mb4_general_ci"
   CHARACTERSET="utf8mb4"
-  MARIADB_BLOCK='innodb_large_prefix                     = 1'
+  MARIADB_BLOCK='######'
 fi
 
 echo "[client]
@@ -243,7 +243,9 @@ mysql_install_db --user=mysql --skip-name-resolve --force --defaults-file=/etc/m
 sleep 5
 
 ### start mysql service ###
-service mysql start
+systemctl enable mariadb.service
+sleep 5
+systemctl start mariadb.service
 sleep 5
 
 ### standalone instance standard users ##
