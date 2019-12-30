@@ -11,7 +11,7 @@ VAR_SSH_USER="master"
 VAR_MARIADB_VERSION="103"
 
 ### Ping host ####
-ansible -i $SCRIPT_PATH/hosts -m ping $VAR_MARIADB_HOST -u $VAR_SSH_USER --ask-pass --become -v
+ansible -i $SCRIPT_PATH/hosts -m ping $VAR_MARIADB_HOST -u $VAR_SSH_USER -o
 
-### mysql install ####
-ansible-playbook -v -i $SCRIPT_PATH/hosts -e "{mariadb_version: '$VAR_MARIADB_VERSION'}" $SCRIPT_PATH/playbook/mariadb_install.yml -l $VAR_MARIADB_HOST  -u $VAR_SSH_USER --ask-pass --become
+### MariaDB install ####
+ansible-playbook -v -i $SCRIPT_PATH/hosts -e "{mariadb_version: '$VAR_MARIADB_VERSION'}" $SCRIPT_PATH/playbook/mariadb_install.yml -l $VAR_MARIADB_HOST  -u $VAR_SSH_USER

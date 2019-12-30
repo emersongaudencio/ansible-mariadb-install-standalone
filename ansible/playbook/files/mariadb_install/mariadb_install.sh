@@ -34,7 +34,7 @@ yum -y remove MariaDB-common MariaDB-compat
 yum -y remove MariaDB-server MariaDB-client
 
 ### install pre-packages ####
-yum -y install screen expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel
+yum -y install screen yum-utils expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel
 
 if [ "$MARIADB_VERSION" == "101" ]; then
    VERSION="10.1"
@@ -44,6 +44,8 @@ elif [[ "$MARIADB_VERSION" == "103" ]]; then
    VERSION="10.3"
 elif [[ "$MARIADB_VERSION" == "104" ]]; then
    VERSION="10.4"
+elif [[ "$MARIADB_VERSION" == "105" ]]; then
+   VERSION="10.5"
 fi
 
 #### REPO MARIADB ######
@@ -61,7 +63,7 @@ yum clean headers
 yum clean packages
 yum clean metadata
 
-### installation maridb via yum ####
+### Installation MARIADB via yum ####
 yum -y install MariaDB-server MariaDB-client
 yum -y install perl-DBD-MySQL  MySQL-python
 
@@ -75,7 +77,7 @@ yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
 yum -y install percona-toolkit
 yum -y install MariaDB-backup
 
-##### SYSCTL MYSQL ###########################
+##### SYSCTL MARIADB/MYSQL ###########################
 # insert parameters into /etc/sysctl.conf for incresing MariaDB limits
 echo "# mysql preps
 vm.swappiness = 0
@@ -109,7 +111,7 @@ echo '# all_users' >> /etc/security/limits.conf
 echo '* soft nofile 102400' >> /etc/security/limits.conf
 echo '* hard nofile 102400' >> /etc/security/limits.conf
 
-#####  MYSQL LIMITS ###########################
+#####  MARIADB/MYSQL LIMITS ###########################
 mkdir -p /etc/systemd/system/mariadb.service.d/
 echo ' ' > /etc/systemd/system/mariadb.service.d/limits.conf
 echo '# mysql' >> /etc/systemd/system/mariadb.service.d/limits.conf

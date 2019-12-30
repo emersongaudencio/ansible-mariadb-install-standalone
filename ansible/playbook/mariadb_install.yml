@@ -8,7 +8,7 @@
      - name: Transfering MariaDB Configuration script
        copy: src=mariadb_install/mariadb_install_config.sh dest=/tmp mode=0777
 
-     - name: Executing MariaDB Instalation script
+     - name: Executing MariaDB Installation script
        command: "sh /tmp/mariadb_install.sh {{ mariadb_version }}"
        register: cmd_install
      - debug: msg="{{ cmd_install.stdout_lines|replace('\\t',' ') }}"
@@ -22,10 +22,10 @@
 
      - name: Ansible delete - MariaDB install script
        file:
-         path: /tmp/mariadb_install_config.sh
+         path: /tmp/mariadb_install.sh
          state: absent
 
      - name: Ansible delete - MariaDB config script
        file:
-         path: /tmp/mariadb_install.sh
+         path: /tmp/mariadb_install_config.sh
          state: absent
