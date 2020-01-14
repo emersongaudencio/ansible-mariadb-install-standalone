@@ -9,6 +9,15 @@ cd $SCRIPT_PATH
 VAR_HOST="$1"
 VAR_MARIADB_VERSION="$2"
 
+if [ "${VAR_HOST}" == '' ] ; then
+  echo "No host specified. Please have a look at README file for futher information!"
+  exit 1
+fi
+
+if [ "${VAR_MARIADB_VERSION}" == '' ] ; then
+  echo "No MariaDB version specified. Please have a look at README file for futher information!"
+  exit 1
+fi
 
 if [ "$VAR_MARIADB_VERSION" -gt 0 -a "$VAR_HOST" != "" ]; then
   ### Ping host ####
