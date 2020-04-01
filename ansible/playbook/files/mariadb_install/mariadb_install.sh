@@ -80,7 +80,7 @@ yum -y install MariaDB-backup
 ##### SYSCTL MARIADB/MYSQL ###########################
 # insert parameters into /etc/sysctl.conf for incresing MariaDB limits
 echo "# mysql preps
-vm.swappiness = 0
+vm.swappiness = 1
 fs.suid_dumpable = 1
 fs.aio-max-nr = 1048576
 fs.file-max = 6815744
