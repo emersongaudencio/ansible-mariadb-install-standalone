@@ -187,7 +187,7 @@ general_log_file                        = $DATA_LOG/mysql-general.log
 general_log                             = 0
 
 # enable scheduler on MariaDB
-event_scheduler                         = ON
+event_scheduler                         = 1
 
 # Performance monitoring (with low overhead)
 innodb_monitor_enable                   = all
