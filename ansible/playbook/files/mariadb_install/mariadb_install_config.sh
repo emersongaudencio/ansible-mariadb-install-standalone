@@ -165,6 +165,7 @@ connect_timeout                         = 60
 skip-name-resolve                       = 1
 
 # sort and group configs
+key_buffer_size                         = 32M
 sort_buffer_size                        = $SORT_MEM
 innodb_sort_buffer_size                 = 67108864
 myisam_sort_buffer_size                 = $SORT_MEM
@@ -185,9 +186,12 @@ log-error                               = $DATA_LOG/mysql-error.log
 general_log_file                        = $DATA_LOG/mysql-general.log
 general_log                             = 0
 
+# enable scheduler on MariaDB
+event_scheduler                         = ON
+
 # Performance monitoring (with low overhead)
 innodb_monitor_enable                   = all
-performance_schema                      = ON
+performance_schema                      = OFF
 performance-schema-instrument           ='%=ON'
 performance-schema-consumer-events-stages-current=ON
 performance-schema-consumer-events-stages-history=ON
