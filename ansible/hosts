@@ -9,4 +9,8 @@
 ## 10.25.1.57
 
 [dbservers]
-dbtest01 ansible_ssh_host=172.16.122.135
+dblocalhost ansible_connection=local
+dbmariadb101 ansible_ssh_host=172.16.122.133
+dbmariadb102 ansible_ssh_host=172.16.122.134
+dbmariadb103 ansible_ssh_host=172.16.122.135
+dbmariadb104 ansible_ssh_host=172.16.122.136

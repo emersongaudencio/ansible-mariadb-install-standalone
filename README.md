@@ -36,7 +36,7 @@
  ```
  After that you have had generated the keys to copy the keys to the database machines, see instructions below:
  ```
- ssh-copy-id -i ansible.pub 172.16.122.135
+ ssh-copy-id -i ansible.pub 172.16.122.136
  ```
 
  Please edit the file called hosts inside of the ansible git directory :
@@ -57,17 +57,21 @@
  ## 10.25.1.57
 
  [dbservers]
- dbtest01 ansible_ssh_host=172.16.122.135
+ dblocalhost ansible_connection=local
+ dbmariadb101 ansible_ssh_host=172.16.122.133
+ dbmariadb102 ansible_ssh_host=172.16.122.134
+ dbmariadb103 ansible_ssh_host=172.16.122.135
+ dbmariadb104 ansible_ssh_host=172.16.122.136
  ```
 
  For testing if it is all working properly, run the command below :
  ```
- ansible -m ping dbtest01 -v
+ ansible -m ping dbmariadb104 -v
  ```
 
  Alright finally we can install our MariaDB 10.4 using Ansible as we planned to, run the command below:
  ```
- sh run_mariadb_install.sh dbtest01 104
+ sh run_mariadb_install.sh dbmariadb104 104
  ```
 
  PS: Just remember that you can do a single installation at the time or a group installation you inform the name of the group in the hosts' files instead of the host itself.
@@ -111,7 +115,7 @@ ssh-keygen -f ansible
 ```
 Depois copie a
 ```
-ssh-copy-id -i ansible.pub 172.16.122.135
+ssh-copy-id -i ansible.pub 172.16.122.136
 ```
 
 Edite o arquivo hosts do pacote de diretorio do ansible:
@@ -132,17 +136,21 @@ Adicione os hosts que vai fazer a instalacao e salve o arquivo, veja o exemplo a
 ## 10.25.1.57
 
 [dbservers]
-dbtest01 ansible_ssh_host=172.16.122.135
+dblocalhost ansible_connection=local
+dbmariadb101 ansible_ssh_host=172.16.122.133
+dbmariadb102 ansible_ssh_host=172.16.122.134
+dbmariadb103 ansible_ssh_host=172.16.122.135
+dbmariadb104 ansible_ssh_host=172.16.122.136
 ```
 
 Depois disso faca um teste para verificar se o ansible esta realmente conectando e funcionando corretamente com o script abaixo:
 ```
-ansible -m ping dbtest01 -v
+ansible -m ping dbmariadb104 -v
 ```
 
 Agora finalmente execute o script para fazer a instalacao remota do MariaDB 10.4 no seu servidor de banco de dados:
 ```
-sh run_mariadb_install.sh dbtest01 104
+sh run_mariadb_install.sh dbmariadb104 104
 ```
 
 Obs: Lembrando que tambem eh possivel fazer a instalacao para todo um grupo de servidor de uma soh vez, substituindo o nome do servidor pelo nome do grupo, que no nosso exemplo eh dbservers.
