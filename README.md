@@ -73,6 +73,12 @@
  ```
  sh run_mariadb_install.sh dbmariadb104 104
  ```
+ ### Parameters specification:
+ #### run_mariadb_install.sh
+ Parameter  | Value           | Mandatory | Order | Accepted values
+ ------------ | ------------- | ------------- | ------------- | -------------
+ host | dbmariadb104 | Yes | 1 | hosts who are placed inside of the hosts file
+ db mariadb version | 104 | Yes | 2 | 101, 102, 103, 104, 105
 
  PS: Just remember that you can do a single installation at the time or a group installation you inform the name of the group in the hosts' files instead of the host itself.
 
