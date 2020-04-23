@@ -21,7 +21,7 @@ rm -rf /etc/yum.repos.d/mysql-community-source.repo
 rm -rf /etc/yum.repos.d/percona-original-release.repo
 yum clean headers
 yum clean packages
-yum clean metadatas
+yum clean metadata
 
 ####### PACKAGES ###########################
 # -------------- For RHEL/CentOS 7 --------------
