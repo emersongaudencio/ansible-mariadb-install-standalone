@@ -19,13 +19,14 @@ then
  INNODB_READS=16
  INNODB_MIN_IO=200
  INNODB_MAX_IO=800
- TEMP_TABLE_SIZE='2048M'
+ TEMP_TABLE_SIZE='16M'
  NR_CONNECTIONS=1000
+ NR_CONNECTIONS_USER=950
  SORT_MEM='256M'
- SORT_BLOCK="read_rnd_buffer_size                    = 2M
+ SORT_BLOCK="read_rnd_buffer_size                    = 1M
+read_buffer_size                        = 1M
 max_sort_length                         = 1M
 max_length_for_sort_data                = 1M
-read_buffer_size                        = 2M
 mrr_buffer_size                         = 1M
 group_concat_max_len                    = 4096"
 else
@@ -34,8 +35,9 @@ else
  INNODB_READS=8
  INNODB_MIN_IO=200
  INNODB_MAX_IO=300
- TEMP_TABLE_SIZE='1024M'
+ TEMP_TABLE_SIZE='16M'
  NR_CONNECTIONS=500
+ NR_CONNECTIONS_USER=450
  SORT_MEM='128M'
  SORT_BLOCK="read_rnd_buffer_size                    = 131072
 max_sort_length                         = 262144
