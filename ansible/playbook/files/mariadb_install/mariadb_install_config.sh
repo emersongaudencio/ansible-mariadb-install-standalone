@@ -98,6 +98,10 @@ default-storage-engine                  = InnoDB
 optimizer_switch                        = 'index_merge_intersection=off'
 bulk_insert_buffer_size                 = 128M
 
+# files limits
+open_files_limit                        = 102400
+innodb_open_files                       = 65536
+
 query_cache_size                        = 0
 query_cache_type                        = 0
 

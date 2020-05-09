@@ -87,8 +87,10 @@ yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
 yum -y install percona-toolkit sysbench
 
 ##### SYSCTL MARIADB/MYSQL ###########################
+check_sysctl=$(cat /etc/sysctl.conf | grep '# mysql-pre-reqs' | wc -l)
+if [ "$check_sysctl" == "0" ]; then
 # insert parameters into /etc/sysctl.conf for incresing MariaDB limits
-echo "# mysql preps
+echo "# mysql-pre-reqs
 vm.swappiness = 1
 fs.suid_dumpable = 1
 fs.aio-max-nr = 1048576
@@ -102,55 +104,60 @@ net.ipv4.ip_local_port_range = 9000 65500
 net.core.rmem_default=4194304
 net.core.rmem_max=4194304
 net.core.wmem_default=262144
-net.core.wmem_max=1048586" > /etc/sysctl.conf
-
-# recarrega confs do /etc/sysctl.conf
+net.core.wmem_max=1048586" >> /etc/sysctl.conf
+else
+echo "MySQL Pre-reqs for /etc/sysctl.conf is already in place!"
+fi
+# reload confs of /etc/sysctl.confs
 sysctl -p
 
 #####  MYSQL LIMITS ###########################
-
+check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
+if [ "$check_limits" == "0" ]; then
 echo ' ' >> /etc/security/limits.conf
-echo '# mysql' >> /etc/security/limits.conf
-echo 'mysql              soft    nproc   2047' >> /etc/security/limits.conf
-echo 'mysql              hard    nproc   16384' >> /etc/security/limits.conf
-echo 'mysql              soft    nofile  4096' >> /etc/security/limits.conf
-echo 'mysql              hard    nofile  65536' >> /etc/security/limits.conf
-echo 'mysql              soft    stack   10240' >> /etc/security/limits.conf
+echo '# mysql-pre-reqs' >> /etc/security/limits.conf
+echo 'mysql              soft    nproc   102400' >> /etc/security/limits.conf
+echo 'mysql              hard    nproc   102400' >> /etc/security/limits.conf
+echo 'mysql              soft    nofile  102400' >> /etc/security/limits.conf
+echo 'mysql              hard    nofile  102400' >> /etc/security/limits.conf
+echo 'mysql              soft    stack   102400' >> /etc/security/limits.conf
+echo 'mysql              soft    core unlimited' >> /etc/security/limits.conf
+echo 'mysql              hard    core unlimited' >> /etc/security/limits.conf
 echo '# all_users' >> /etc/security/limits.conf
 echo '* soft nofile 102400' >> /etc/security/limits.conf
 echo '* hard nofile 102400' >> /etc/security/limits.conf
+else
+echo "MySQL Pre-reqs for /etc/security/limits.conf is already in place!"
+fi
 
 #####  MARIADB/MYSQL LIMITS ###########################
 mkdir -p /etc/systemd/system/mariadb.service.d/
-echo ' ' > /etc/systemd/system/mariadb.service.d/limits.conf
-echo '# mysql' >> /etc/systemd/system/mariadb.service.d/limits.conf
-echo '[Service]' >> /etc/systemd/system/mariadb.service.d/limits.conf
+echo '[Service]' > /etc/systemd/system/mariadb.service.d/limits.conf
 echo 'LimitNOFILE=102400' >> /etc/systemd/system/mariadb.service.d/limits.conf
-echo ' ' > /etc/systemd/system/mariadb.service.d/timeout.conf
-echo '# mysql' >> /etc/systemd/system/mariadb.service.d/timeout.conf
-echo '[Service]' >> /etc/systemd/system/mariadb.service.d/timeout.conf
+echo '[Service]' > /etc/systemd/system/mariadb.service.d/timeout.conf
 echo 'TimeoutSec=28800' >> /etc/systemd/system/mariadb.service.d/timeout.conf
 mkdir -p /etc/systemd/system/mysqld.service.d/
-echo ' ' > /etc/systemd/system/mysqld.service.d/limits.conf
-echo '# mysql' >> /etc/systemd/system/mysqld.service.d/limits.conf
-echo '[Service]' >> /etc/systemd/system/mysqld.service.d/limits.conf
+echo '[Service]' > /etc/systemd/system/mysqld.service.d/limits.conf
 echo 'LimitNOFILE=102400' >> /etc/systemd/system/mysqld.service.d/limits.conf
-echo ' ' > /etc/systemd/system/mysqld.service.d/timeout.conf
-echo '# mysql' >> /etc/systemd/system/mysqld.service.d/timeout.conf
-echo '[Service]' >> /etc/systemd/system/mysqld.service.d/timeout.conf
+echo '[Service]' > /etc/systemd/system/mysqld.service.d/timeout.conf
 echo 'TimeoutSec=28800' >> /etc/systemd/system/mysqld.service.d/timeout.conf
 systemctl daemon-reload
 
 ##### CONFIG PROFILE #############
+check_profile=$(cat /etc/profile | grep '# mysql-pre-reqs' | wc -l)
+if [ "$check_profile" == "0" ]; then
 echo ' ' >> /etc/profile
-echo '# mysql' >> /etc/profile
+echo '# mysql-pre-reqs' >> /etc/profile
 echo 'if [ $USER = "mysql" ]; then' >> /etc/profile
 echo '  if [ $SHELL = "/bin/bash" ]; then' >> /etc/profile
-echo '    ulimit -u 16384 -n 65536' >> /etc/profile
+echo '    ulimit -u 65536 -n 65536' >> /etc/profile
 echo '  else' >> /etc/profile
-echo '    ulimit -u 16384 -n 65536' >> /etc/profile
+echo '    ulimit -u 65536 -n 65536' >> /etc/profile
 echo '  fi' >> /etc/profile
 echo 'fi' >> /etc/profile
+else
+echo "MySQL Pre-reqs for /etc/profile is already in place!"
+fi
 
 ### REMOVE MARIADB VERSION FILE #####
 rm -rf /tmp/MARIADB_VERSION
