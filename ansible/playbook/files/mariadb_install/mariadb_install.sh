@@ -35,6 +35,7 @@ yum -y remove mysql mysql-server mysql-libs mysql-common mysql-community-common 
 yum -y remove 'mysql*'
 yum -y remove MariaDB-common MariaDB-compat
 yum -y remove MariaDB-server MariaDB-client
+yum -y remove percona-release 
 
 ### install pre-packages ####
 yum -y install screen yum-utils expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel
