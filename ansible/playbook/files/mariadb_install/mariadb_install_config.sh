@@ -7,7 +7,18 @@ GTID=$(($RANDOM))
 MARIADB_VERSION=`mysql --version |awk -F "-" {'print $1'}|awk -F "." {'print $1$2$3'} | awk {'print $5'}`
 
 ### get amount of memory who will be reserved to InnoDB Buffer Pool
-INNODB_MEM=$(expr $(($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 10)) \* 7 / 1024)M
+INNODB_MEM=$(expr $(($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 10)) \* 7 / 1024)
+
+lg=$(expr $(echo $INNODB_MEM | wc -m) - 3)
+var_innodb_suffix="${INNODB_MEM:$lg:2}"
+
+if [ "$var_innodb_suffix" -gt 1 -a "$var_innodb_suffix" -lt 99 ]; then
+  var_innodb_suffix="00"
+fi
+
+var_innodb_preffix="${INNODB_MEM:0:$lg}"
+INNODB_MEM=${var_innodb_preffix}${var_innodb_suffix}M
+echo "InnoDB BF Pool: "$INNODB_MEM
 
 ### get the number of cpu's to estimate how many innodb instances will be enough for it. ###
 NR_CPUS=$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)
