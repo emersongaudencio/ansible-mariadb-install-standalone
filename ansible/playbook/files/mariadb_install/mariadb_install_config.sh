@@ -165,6 +165,7 @@ tmpdir                                  = $TMP_DIR
 max_allowed_packet                      = 1G
 net_buffer_length                       = 999424
 max_connections                         = $NR_CONNECTIONS
+max_user_connections                    = $NR_CONNECTIONS_USER
 max_connect_errors                      = 100
 wait_timeout                            = 28800
 connect_timeout                         = 60
