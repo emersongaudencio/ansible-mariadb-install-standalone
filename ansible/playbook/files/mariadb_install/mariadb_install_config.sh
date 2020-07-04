@@ -122,11 +122,15 @@ thread_cache_size                       = 300
 # logbin configs
 log-bin                                 = $DATA_LOG/mysql-bin
 binlog_format                           = ROW
+binlog_row_image                        = MINIMAL
 binlog_checksum                         = CRC32
 expire_logs_days                        = 5
 log_bin_trust_function_creators         = 1
 sync_binlog                             = 1
 log_slave_updates                       = 1
+master_info_repository                  = TABLE
+relay_log_info_repository               = TABLE
+relay_log_recovery                      = 1
 
 relay_log                               = $DATA_LOG/mysql-relay-bin
 relay_log_purge                         = 1
@@ -333,6 +337,7 @@ password        = $hash
 ### setup the users for monitoring/replication streaming and security purpose ###
 mysql -e "GRANT REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD';";
 mysql -e "GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQLCHK_USER_PWD';";
+mysql -e "GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'%' IDENTIFIED BY '$MYSQLCHK_USER_PWD';";
 mysql -e "DELETE FROM mysql.user WHERE User='';";
 mysql -e "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
 mysql -e "UPDATE mysql.user SET Password=PASSWORD('$hash') WHERE User='root';"
