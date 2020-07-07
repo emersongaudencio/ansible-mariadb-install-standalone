@@ -3,6 +3,7 @@
 # To generate a random number in a UNIX or Linux shell, the shell maintains a shell variable named RANDOM. Each time this variable is read, a random number between 0 and 32767 is generated.
 SERVERID=$(($RANDOM))
 GTID=$(($RANDOM))
+CLIENT_PREFFIX="MariaDB"
 ##### Checking MariaDB Version #####
 MARIADB_VERSION=`mysql --version |awk -F "-" {'print $1'}|awk -F "." {'print $1$2$3'} | awk {'print $5'}`
 
@@ -279,13 +280,13 @@ REPLICATION_USER_NAME="replication_user"
 MYSQLCHK_USER_NAME="mysqlchk"
 
 ### generate mysqlchk passwd #####
-RD_MYSQLCHK_USER_PWD="mysqlchk-$SERVERID-$GTID"
+RD_MYSQLCHK_USER_PWD="$CLIENT_PREFFIX-mysqlchk-$SERVERID-$GTID"
 touch /tmp/$RD_MYSQLCHK_USER_PWD
 echo $RD_MYSQLCHK_USER_PWD > /tmp/$RD_MYSQLCHK_USER_PWD
 HASH_MYSQLCHK_USER_PWD=`md5sum  /tmp/$RD_MYSQLCHK_USER_PWD | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
 
 ### generate replication passwd #####
-RD_REPLICATION_USER_PWD="replication-$SERVERID-$GTID"
+RD_REPLICATION_USER_PWD="$CLIENT_PREFFIX-replication-$SERVERID-$GTID"
 touch /tmp/$RD_REPLICATION_USER_PWD
 echo $RD_REPLICATION_USER_PWD > /tmp/$RD_REPLICATION_USER_PWD
 HASH_REPLICATION_USER_PWD=`md5sum  /tmp/$RD_REPLICATION_USER_PWD | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
@@ -295,10 +296,12 @@ MYSQLCHK_USER_PWD=$HASH_MYSQLCHK_USER_PWD
 REPLICATION_USER_PWD=$HASH_REPLICATION_USER_PWD
 
 ### generate root passwd #####
-passwd="root-$SERVERID-$GTID"
+passwd="$CLIENT_PREFFIX-root-$SERVERID-$GTID"
 touch /tmp/$passwd
 echo $passwd > /tmp/$passwd
 hash=`md5sum  /tmp/$passwd | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
+hash=`echo ${hash:0:8} | tr  '[a-z]' '[A-Z]'`${hash:8}
+hash=$hash\!\$
 
 ### update root password #####
 mysqladmin -u root password $hash
@@ -333,6 +336,8 @@ password        = $hash
 #The $MYSQLCHK_USER_NAME password is $MYSQLCHK_USER_PWD
 #################################################################
 " > /root/.my.cnf
+
+chmod 400 /root/.my.cnf
 
 ### setup the users for monitoring/replication streaming and security purpose ###
 mysql -e "GRANT REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD';";
