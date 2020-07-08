@@ -129,8 +129,6 @@ expire_logs_days                        = 5
 log_bin_trust_function_creators         = 1
 sync_binlog                             = 1
 log_slave_updates                       = 1
-master_info_repository                  = TABLE
-relay_log_info_repository               = TABLE
 relay_log_recovery                      = 1
 
 relay_log                               = $DATA_LOG/mysql-relay-bin
