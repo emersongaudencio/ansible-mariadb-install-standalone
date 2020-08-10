@@ -8,7 +8,7 @@ CLIENT_PREFFIX="MariaDB"
 MARIADB_VERSION=`mysql --version |awk -F "-" {'print $1'}|awk -F "." {'print $1$2$3'} | awk {'print $5'}`
 
 ### get amount of memory who will be reserved to InnoDB Buffer Pool
-INNODB_MEM=$(expr $(($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 10)) \* 7 / 1024)
+INNODB_MEM=$(expr $(($(cat /proc/meminfo | grep MemTotal | awk '{print $2}') / 10)) \* 6 / 1024)
 
 lg=$(expr $(echo $INNODB_MEM | wc -m) - 3)
 var_innodb_suffix="${INNODB_MEM:$lg:2}"
