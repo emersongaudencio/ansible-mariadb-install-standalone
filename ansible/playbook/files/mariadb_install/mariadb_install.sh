@@ -128,16 +128,26 @@ check_sysctl=$(cat /etc/sysctl.conf | grep '# mysql-pre-reqs' | wc -l)
 if [ "$check_sysctl" == "0" ]; then
 # insert parameters into /etc/sysctl.conf for incresing MariaDB limits
 echo "# mysql-pre-reqs
+# virtual memory limits
 vm.swappiness = 1
+vm.dirty_background_ratio = 3
+vm.dirty_ratio = 40
+vm.dirty_expire_centisecs = 500
+vm.dirty_writeback_centisecs = 100
 fs.suid_dumpable = 1
+vm.nr_hugepages = 0
+# file system limits
 fs.aio-max-nr = 1048576
 fs.file-max = 6815744
+# kernel limits
+kernel.panic_on_oops = 1
 kernel.shmall = 1073741824
 kernel.shmmax = 4398046511104
 kernel.shmmni = 4096
-# semaphores: semmsl, semmns, semopm, semmni
+# kernel semaphores: semmsl, semmns, semopm, semmni
 kernel.sem = 250 32000 100 128
-net.ipv4.ip_local_port_range = 9000 65500
+# networking limits
+net.ipv4.ip_local_port_range = 9000 65499
 net.core.rmem_default=4194304
 net.core.rmem_max=4194304
 net.core.wmem_default=262144
