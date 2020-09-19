@@ -144,9 +144,12 @@ relay_log_purge                         = 1
 # slave configs
 slave_compressed_protocol               = 1
 slave_ddl_exec_mode                     = IDEMPOTENT
-slave_net_timeout                       = 60
-slave_parallel_threads                  = 0
 slave_sql_verify_checksum               = ON
+slave_net_timeout                       = 30
+slave_parallel_threads                  = 8
+slave_parallel_max_queued               = 536870912
+slave_parallel_mode                     = 'optimistic'
+gtid_strict_mode                        = 1
 
 # innodb vars
 innodb_buffer_pool_size                 = $INNODB_MEM
