@@ -149,7 +149,7 @@ slave_net_timeout                       = 30
 slave_parallel_threads                  = 8
 slave_parallel_max_queued               = 536870912
 slave_parallel_mode                     = 'optimistic'
-gtid_strict_mode                        = 1
+gtid_strict_mode                        = 0
 
 # innodb vars
 innodb_buffer_pool_size                 = $INNODB_MEM
