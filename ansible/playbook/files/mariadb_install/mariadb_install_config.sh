@@ -297,7 +297,7 @@ echo $RD_MYSQLCHK_USER_PWD > /tmp/$RD_MYSQLCHK_USER_PWD
 HASH_MYSQLCHK_USER_PWD=`md5sum  /tmp/$RD_MYSQLCHK_USER_PWD | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
 
 ### generate replication passwd #####
-RD_REPLICATION_USER_PWD="$CLIENT_PREFFIX-replication-$SERVERID-$GTID"
+RD_REPLICATION_USER_PWD="replication-$SERVERID"
 touch /tmp/$RD_REPLICATION_USER_PWD
 echo $RD_REPLICATION_USER_PWD > /tmp/$RD_REPLICATION_USER_PWD
 HASH_REPLICATION_USER_PWD=`md5sum  /tmp/$RD_REPLICATION_USER_PWD | awk '{print $1}' | sed -e 's/^[[:space:]]*//' | tr -d '/"/'`
@@ -351,7 +351,7 @@ password        = $hash
 chmod 400 /root/.my.cnf
 
 ### setup the users for monitoring/replication streaming and security purpose ###
-mysql -e "GRANT REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD';";
+mysql -e "GRANT PROCESS, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO '$REPLICATION_USER_NAME'@'%' IDENTIFIED BY '$REPLICATION_USER_PWD';";
 mysql -e "GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQLCHK_USER_PWD';";
 mysql -e "GRANT PROCESS ON *.* TO '$MYSQLCHK_USER_NAME'@'%' IDENTIFIED BY '$MYSQLCHK_USER_PWD';";
 mysql -e "DELETE FROM mysql.user WHERE User='';";
