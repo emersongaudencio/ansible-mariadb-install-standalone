@@ -5,6 +5,54 @@ echo "##############"
 echo "$1" > /tmp/MARIADB_VERSION
 MARIADB_VERSION=$(cat /tmp/MARIADB_VERSION)
 
+# os_type = rhel
+os_type=
+# os_version as demanded by the OS (codename, major release, etc.)
+os_version=
+supported="Only RHEL/CentOS 7 & 8 are supported for this installation process."
+
+msg(){
+    type=$1 #${1^^}
+    shift
+    printf "[$type] %s\n" "$@" >&2
+}
+
+error(){
+    msg error "$@"
+    exit 1
+}
+
+identify_os(){
+    arch=$(uname -m)
+    # Check for RHEL/CentOS, Fedora, etc.
+    if command -v rpm >/dev/null && [[ -e /etc/redhat-release || -e /etc/os-release ]]
+    then
+        os_type=rhel
+        el_version=$(rpm -qa '(oraclelinux|sl|redhat|centos|fedora|rocky|alma|system)*release(|-server)' --queryformat '%{VERSION}')
+        case $el_version in
+            1*) os_version=6 ; error "RHEL/CentOS 6 is no longer supported" "$supported" ;;
+            2*) os_version=7 ;;
+            5*) os_version=5 ; error "RHEL/CentOS 5 is no longer supported" "$supported" ;;
+            6*) os_version=6 ; error "RHEL/CentOS 6 is no longer supported" "$supported" ;;
+            7*) os_version=7 ;;
+            8*) os_version=8 ;;
+             *) error "Detected RHEL or compatible but version ($el_version) is not supported." "$supported"  "$otherplatforms" ;;
+         esac
+         if [[ $arch == aarch64 ]] && [[ $os_version != 7 ]]; then error "Only RHEL/CentOS 7 are supported for ARM64. Detected version: '$os_version'"; fi
+    fi
+
+    if ! [[ $os_type ]] || ! [[ $os_version ]]
+    then
+        error "Could not identify OS type or version." "$supported"
+    fi
+}
+
+### OS auto discovey to identify which is the OS and version thats been used it.
+identify_os
+
+echo $os_type
+echo $os_version
+
 ##### FIREWALLD DISABLE ########################
 systemctl disable firewalld
 systemctl stop firewalld
@@ -19,27 +67,7 @@ rm -rf /etc/yum.repos.d/mariadb.repo
 rm -rf /etc/yum.repos.d/mysql-community.repo
 rm -rf /etc/yum.repos.d/mysql-community-source.repo
 rm -rf /etc/yum.repos.d/percona-original-release.repo
-yum clean headers
-yum clean packages
-yum clean metadata
-
-####### PACKAGES ###########################
-# -------------- For RHEL/CentOS 7 --------------
-yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-# yum -y install epel-release
-
-### remove old packages ####
-yum -y remove mariadb-libs
-yum -y remove 'maria*'
-yum -y remove mysql mysql-server mysql-libs mysql-common mysql-community-common mysql-community-libs
-yum -y remove 'mysql*'
-yum -y remove MariaDB-common MariaDB-compat
-yum -y remove MariaDB-server MariaDB-client
-yum -y remove percona-release
-yum -y remove galera
-
-### install pre-packages ####
-yum -y install screen yum-utils expect nload bmon iptraf glances perl perl-DBI openssl pigz zlib file sudo  libaio rsync snappy net-tools wget nmap htop dstat sysstat perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey socat libev gcc zlib zlib-devel openssl openssl-devel python-pip python-devel
+yum clean all
 
 if [ "$MARIADB_VERSION" == "101" ]; then
    VERSION="10.1"
@@ -53,20 +81,61 @@ elif [[ "$MARIADB_VERSION" == "105" ]]; then
    VERSION="10.5"
 fi
 
-#### REPO MARIADB ######
-# -------------- For RHEL/CentOS 7 --------------
-echo "# MariaDB $VERSION CentOS repository list
+####### PACKAGES ###########################
+if [[ $os_type == "rhel" ]]; then
+    if [[ $os_version == "7" ]]; then
+      # -------------- For RHEL/CentOS 7 --------------
+      yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+      #### REPO MARIADB ######
+      # -------------- For RHEL/CentOS 7 --------------
+      echo "# MariaDB $VERSION CentOS repository list
 # http://downloads.mariadb.org/mariadb/repositories/
 [mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/$VERSION/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1" > /etc/yum.repos.d/mariadb.repo
+    elif [[ $os_version == "8" ]]; then
+      # -------------- For RHEL/CentOS 8 --------------
+      yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+      #### REPO MARIADB ######
+      # -------------- For RHEL/CentOS 8 --------------
+      echo "# MariaDB $VERSION CentOS repository list
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/$VERSION/centos8-amd64
+module_hotfixes=1
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1" > /etc/yum.repos.d/mariadb.repo
+    fi
+# yum -y install epel-release
+fi
+
+### remove old packages ####
+yum -y remove mariadb-libs
+yum -y remove 'maria*'
+yum -y remove mysql mysql-server mysql-libs mysql-common mysql-community-common mysql-community-libs
+yum -y remove 'mysql*'
+yum -y remove MariaDB-common MariaDB-compat
+yum -y remove MariaDB-server MariaDB-client
+yum -y remove percona-release
+yum -y remove galera
 
 ### clean yum cache ###
-yum clean headers
-yum clean packages
-yum clean metadata
+yum clean all
+
+### monitoring pre-packages ####
+yum -y install nload bmon iptraf glances nmap htop dstat sysstat socat
+
+# dev tools
+yum -y install screen yum-utils expect perl perl-DBI perl-IO-Socket-SSL perl-Digest-MD5 perl-TermReadKey  libev gcc zlib zlib-devel openssl openssl-devel python3 python3-pip python3-devel
+
+# others pre-packages
+yum -y install pigz zlib file sudo libaio rsync snappy net-tools wget
+
+### clean yum cache ###
+yum clean all
 
 ### Installation MARIADB via yum ####
 yum -y install MariaDB-client
@@ -76,12 +145,24 @@ yum -y install perl-DBD-MySQL
 yum -y install MySQL-python
 yum -y install MariaDB-backup
 
-#### mydumper ######
-#yum -y install https://github.com/maxbube/mydumper/releases/download/v0.9.5/mydumper-0.9.5-2.el7.x86_64.rpm
-yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/mydumper-0.9.5-2.el7.x86_64.rpm
 
-#### qpress #####
-yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el7.x86_64.rpm
+####### PACKAGES ###########################
+if [[ $os_type == "rhel" ]]; then
+    if [[ $os_version == "7" ]]; then
+      # -------------- For RHEL/CentOS 7 --------------
+      #### mydumper ######
+      yum -y install https://github.com/maxbube/mydumper/releases/download/v0.10.7-2/mydumper-0.10.7-2.el7.x86_64.rpm
+
+      #### qpress #####
+      yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el7.x86_64.rpm
+    elif [[ $os_version == "8" ]]; then
+      #### mydumper ######
+      yum -y install https://github.com/maxbube/mydumper/releases/download/v0.10.7-2/mydumper-0.10.7-2.el8.x86_64.rpm
+
+      #### qpress #####
+      yum -y install https://repo.percona.com/tools/yum/release/8/RPMS/x86_64/qpress-11-1.el8.x86_64.rpm
+    fi
+fi
 
 ### Percona #####
 ### https://www.percona.com/doc/percona-server/LATEST/installation/yum_repo.html
