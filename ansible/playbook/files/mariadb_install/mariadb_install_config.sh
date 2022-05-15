@@ -92,6 +92,18 @@ elif [[ "$MARIADB_VERSION" == "105" ]]; then
   CHARACTERSET="utf8mb4"
   MARIADB_BLOCK='# enable causal_reads on MariaDB
 session_track_system_variables=last_gtid'
+elif [[ "$MARIADB_VERSION" == "106" ]]; then
+  ### collation and character set ###
+  COLLATION="utf8mb4_general_ci"
+  CHARACTERSET="utf8mb4"
+  MARIADB_BLOCK='# enable causal_reads on MariaDB
+session_track_system_variables=last_gtid'
+elif [[ "$MARIADB_VERSION" == "107" ]]; then
+  ### collation and character set ###
+  COLLATION="utf8mb4_general_ci"
+  CHARACTERSET="utf8mb4"
+  MARIADB_BLOCK='# enable causal_reads on MariaDB
+session_track_system_variables=last_gtid'
 fi
 
 echo "[client]

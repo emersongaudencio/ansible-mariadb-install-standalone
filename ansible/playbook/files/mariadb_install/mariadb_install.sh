@@ -79,6 +79,10 @@ elif [[ "$MARIADB_VERSION" == "104" ]]; then
    VERSION="10.4"
 elif [[ "$MARIADB_VERSION" == "105" ]]; then
    VERSION="10.5"
+elif [[ "$MARIADB_VERSION" == "106" ]]; then
+  VERSION="10.6"
+elif [[ "$MARIADB_VERSION" == "107" ]]; then
+  VERSION="10.7"
 fi
 
 ####### PACKAGES ###########################
