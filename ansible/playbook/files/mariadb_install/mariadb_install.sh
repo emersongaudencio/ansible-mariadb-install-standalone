@@ -155,15 +155,17 @@ if [[ $os_type == "rhel" ]]; then
     if [[ $os_version == "7" ]]; then
       # -------------- For RHEL/CentOS 7 --------------
       #### mydumper ######
-      yum -y install https://github.com/maxbube/mydumper/releases/download/v0.10.7-2/mydumper-0.10.7-2.el7.x86_64.rpm
+      yum -y install https://github.com/mydumper/mydumper/releases/download/v0.11.5-2/mydumper-0.11.5-2.el7.x86_64.rpm
 
       #### qpress #####
-      yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el7.x86_64.rpm
+      #yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el7.x86_64.rpm
+      yum -y install https://repo.percona.com/tools/yum/release/7/RPMS/x86_64/qpress-11-1.el7.x86_64.rpm
     elif [[ $os_version == "8" ]]; then
       #### mydumper ######
-      yum -y install https://github.com/maxbube/mydumper/releases/download/v0.10.7-2/mydumper-0.10.7-2.el8.x86_64.rpm
+      yum -y install https://github.com/mydumper/mydumper/releases/download/v0.11.5-2/mydumper-0.11.5-2.el8.x86_64.rpm
 
       #### qpress #####
+      #yum -y install https://github.com/emersongaudencio/linux_packages/raw/master/RPM/qpress-11-1.el8.x86_64.rpm
       yum -y install https://repo.percona.com/tools/yum/release/8/RPMS/x86_64/qpress-11-1.el8.x86_64.rpm
     fi
 fi
