@@ -83,6 +83,10 @@ elif [[ "$MARIADB_VERSION" == "106" ]]; then
   VERSION="10.6"
 elif [[ "$MARIADB_VERSION" == "107" ]]; then
   VERSION="10.7"
+elif [[ "$MARIADB_VERSION" == "108" ]]; then
+  VERSION="10.8"
+elif [[ "$MARIADB_VERSION" == "109" ]]; then
+  VERSION="10.9"
 fi
 
 ####### PACKAGES ###########################
@@ -175,6 +179,10 @@ fi
 yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
 yum -y install percona-toolkit sysbench
 
+### installation mysql add-ons via yum ####
+yum -y install perl-DBD-MySQL
+yum -y install jemalloc
+
 #####  MYSQL LIMITS ###########################
 check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
 if [ "$check_limits" == "0" ]; then
@@ -257,6 +265,27 @@ echo 'LimitNOFILE=102400' >> /etc/systemd/system/mysqld.service.d/limits.conf
 echo '[Service]' > /etc/systemd/system/mysqld.service.d/timeout.conf
 echo 'TimeoutSec=28800' >> /etc/systemd/system/mysqld.service.d/timeout.conf
 systemctl daemon-reload
+
+#####  MYSQL MEMORY ALLOCATOR ###########################
+echo '[Service]' > /etc/systemd/system/mariadb.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mariadb.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mariadb.service.d/malloc.conf
+echo '[Service]' > /etc/systemd/system/mysqld.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
+systemctl daemon-reload
+
+# disable transparent huge pages
+echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >> /etc/rc.d/rc.local
+echo "echo never > /sys/kernel/mm/transparent_hugepage/defrag" >> /etc/rc.d/rc.local
+chmod +x /etc/rc.d/rc.local
+
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+  echo never > /sys/kernel/mm/transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+  echo never > /sys/kernel/mm/transparent_hugepage/defrag
+fi
 
 ### REMOVE MARIADB VERSION FILE #####
 rm -rf /tmp/MARIADB_VERSION
