@@ -180,8 +180,7 @@ yum install https://repo.percona.com/yum/percona-release-latest.noarch.rpm -y
 yum -y install percona-toolkit sysbench
 
 ### installation mysql add-ons via yum ####
-yum -y install perl-DBD-MySQL
-yum -y install jemalloc
+yum -y install gperftools-libs
 
 #####  MYSQL LIMITS ###########################
 check_limits=$(cat /etc/security/limits.conf | grep '# mysql-pre-reqs' | wc -l)
@@ -269,10 +268,10 @@ systemctl daemon-reload
 #####  MYSQL MEMORY ALLOCATOR ###########################
 echo '[Service]' > /etc/systemd/system/mariadb.service.d/malloc.conf
 echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mariadb.service.d/malloc.conf
-echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mariadb.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libtcmalloc.so.4"' >> /etc/systemd/system/mariadb.service.d/malloc.conf
 echo '[Service]' > /etc/systemd/system/mysqld.service.d/malloc.conf
 echo 'ExecStartPre=/bin/sh -c "systemctl unset-environment LD_PRELOAD"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
-echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libjemalloc.so.1"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
+echo 'ExecStartPre=/bin/sh -c "systemctl set-environment LD_PRELOAD=/usr/lib64/libtcmalloc.so.4"' >> /etc/systemd/system/mysqld.service.d/malloc.conf
 systemctl daemon-reload
 
 # disable transparent huge pages
